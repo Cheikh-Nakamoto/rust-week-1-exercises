@@ -82,20 +82,18 @@ pub fn add_utxo(utxos: Vec<Utxo>, new_utxo: Utxo) -> Vec<Utxo> {
 /// Find the first transaction with a fee greater than 0.005 BTC.
 pub fn find_high_fee(fee_list: &[f64]) -> Option<(usize, f64)> {
     // TODO: Iterate with enumerate and return the first (index, fee) where fee > 0.005
-    let mut result = None;
-    for (index, fee) in fee_list.iter().enumerate() {
-        if *fee > 0.005 {
-            result = Some((index, *fee));
-        }
-        break;
-    }
-    result
+    fee_list
+        .iter()
+        .enumerate()
+        .find(|&(_, &fee)| fee > 0.005)
+        .map(|(index, &fee)| (index, fee))
+    
 }
 
 /// Return basic wallet details as a tuple of (name, balance).
 pub fn get_wallet_details() -> (String, f64) {
     // TODO: Return a tuple with wallet name and balance
-    ("MyWallet".to_string(), 123.45)
+    ("satoshi_wallet".to_string(), 123.45)
 }
 
 /// Get the status of a transaction from the mempool or "not found".
@@ -146,7 +144,7 @@ pub fn validate_block_height(height: i64) -> (bool, String) {
     } else if height > 800_000 {
         return (
             false,
-            "Block height exceeds current known maximum".to_string(),
+            "Block height exceeds current known maximum. unrealistic".to_string(),
         );
     }
     (true, "Valid block height".to_string())
